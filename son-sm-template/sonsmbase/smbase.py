@@ -29,6 +29,7 @@ import logging
 import yaml
 import time
 import threading
+import os
 from sonsmbase import messaging
 
 
@@ -136,6 +137,8 @@ class sonSMbase(object):
             exit(1)
         else:
             self.uuid = response['uuid']
+            if 'sf_uuid' in os.environ:
+                self.sfuuid = os.environ['sf_uuid']
             LOG.info("{0} registered with uuid:{1}".format(self.name, self.uuid))
 
             # release the registration thread

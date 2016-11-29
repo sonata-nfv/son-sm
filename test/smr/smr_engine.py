@@ -110,10 +110,15 @@ class SMREngine(object):
         if "file://" in image_name:
             image_name = image_name.replace("file://", "")
 
+        if 'sf_uuid' in os.environ:
+            sfuuid = os.environ['sf_uuid']
+        else:
+            sfuuid = None
+
         container = self.dc.create_container(image=image_name,
                                              tty=True,
                                              name=ssm_name,
-                                             environment={'broker_host':broker_host})
+                                             environment={'broker_host':broker_host, 'sf_uuid': sfuuid})
 
         self.dc.start(container=container.get('Id'), links= [(broker['name'], broker['alias'])])
         LOG.debug("{0} instantiation: succeeded".format(ssm_name))
