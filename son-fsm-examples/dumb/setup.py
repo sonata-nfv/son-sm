@@ -50,7 +50,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/sonata-nfv/son-sm/tree/master/son-fsms',
+    url='https://github.com/sonata-nfv/son-sm/tree/master/son-fsm-examples',
 
     # Author details
     author='Hadi Razzaghi Kouchaksaraei',

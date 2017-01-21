@@ -41,7 +41,8 @@ logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 
 class sonSMbase(object):
 
-    def __init__(self, smtype = None,
+    def __init__(self,
+                 smtype = None,
                  sfname = None,
                  name= None,
                  id = None,
@@ -76,7 +77,7 @@ class sonSMbase(object):
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
 
         self.tLock = threading.Lock()
-        t1 = threading.Thread(target=self.registeration)
+        t1 = threading.Thread(target=self.registration)
         t2 = threading.Thread(target=self.run)
 
         # register to Specific Manager Registry
@@ -110,14 +111,14 @@ class sonSMbase(object):
         while True:
             time.sleep(1)
 
-    def registeration(self):
+    def registration(self):
 
         """
         Send a register request to the Specific Manager registry.
 
         """
         self.tLock.acquire()
-        message = {'type': self.smtype,
+        message = {'smtype': self.smtype,
                    'sfname': self.sfname,
                    'name': self.name,
                    'id':self.id,

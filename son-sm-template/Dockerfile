@@ -23,20 +23,15 @@ FROM python:3.4-slim
 MAINTAINER SONATA
 
 # configrurations
-ENV mongo_host mongo
-ENV mongo_port 27017
 ENV broker_host amqp://guest:guest@broker:5672/%2F
 ENV broker_exchange son-kernel
 
-ADD son-fsms/dumb /dumb
 ADD son-sm-template /son-sm-template
 ADD utils/delayedstart.sh /delayedstart.sh
 
 WORKDIR /son-sm-template
 RUN python setup.py install
 
-WORKDIR /dumb
-RUN python setup.py develop
 
-CMD ["dumb"]
+CMD ["son-sm-template"]
 
