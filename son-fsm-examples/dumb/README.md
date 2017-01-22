@@ -1,4 +1,3 @@
-
 # Function Specific Manager (FSM) Example
 A FSM example (dumb fsm) that connects to Service Specific Manager(SMR) and register itself using the SSM/FSM template.
 
@@ -24,4 +23,3 @@ A FSM example (dumb fsm) that connects to Service Specific Manager(SMR) and regi
  * (do in `son-sm/`)
  * `docker build -t sonfsmfunctiondumb1 -f son-fsm-examples/dumb/Dockerfile .`
  * `docker run -it --rm --link broker:broker  --name sonfsmfunctiondumb1  sonfsmfunctiondumb1`
-
