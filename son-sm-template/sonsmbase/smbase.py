@@ -49,19 +49,21 @@ class sonSMbase(object):
                  version= None,
                  description=None):
         """
-        # FSM/SSM name consists of son,smtype(either ssm or fsm), name (a-z), and an id (0-9)
+        # FSM/SSM name consists of son,smtype(either ssm or fsm), sfname, name (a-z), and an id (0-9)
 
         :param smtype: specific management type: either fsm or ssm
         :param sfname: the name of service or function that ssm/fsm belongs to
         :param name: the name of the FSM/SSM
-        :param id: the Id of the FSM/SSM
-        :param version: version
+        :param id: an id number that differentiates same SMs(with different characteristics) belonging to the same service.
+        :param version: SSM/FSM version
         :param description: a description on what does FSM/SSM do
         :param uuid: SSM/FSM uuid
-        :param sfuuid: service/function uuid that the ssm/fsm belongs to
+        :param sfuuid: service/function uuid that the FSM/SSM belongs to
         """
-        #checks if the chosen name by develeopr is correct
+        #checks if the chosen name by develeopr is correct format
         self.name_validation(self.smtype, self.sfname, self.name, self.id)
+
+        #Populating SSM-FSM fileds
         self.smtype = smtype
         self.sfname = sfname
         self.id = id
@@ -95,7 +97,7 @@ class sonSMbase(object):
             LOG.error("Name Error: smtype must be either ssm or fsm")
             exit(1)
         if not sfname.isalpha() and not name.islower():
-            LOG.error("Name Error: name must be (a-z)")
+            LOG.error("Name Error: sfname must be (a-z)")
             exit(1)
         if not name.isalpha() and not name.islower():
             LOG.error("Name Error: name must be (a-z)")
@@ -150,5 +152,7 @@ class sonSMbase(object):
 
 
     def on_registration_ok(self):
-
+        """
+        To be overwritten by subclasses
+        """
         LOG.debug("Received registration ok event.")

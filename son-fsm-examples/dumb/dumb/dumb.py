@@ -41,7 +41,7 @@ class DumbFSM(sonSMbase):
     def __init__(self):
 
         """
-        # FSM/SSM name consists of son,smtype(either ssm or fsm), name (a-z), and an id (0-9)
+        # FSM/SSM name consists of son,smtype(either ssm or fsm),sfname, name (a-z), and an id (0-9)
 
         :param smtype: specific management type: either fsm or ssm
         :param sfname: the name of service or function that ssm/fsm belongs to
@@ -49,6 +49,8 @@ class DumbFSM(sonSMbase):
         :param id: the Id of FSM/SSM, is used to distinguish between multiple SSM/FSM that are created for the same service
         :param version: version
         :param description: a description on what does FSM/SSM do
+        :param uuid: SSM/FSM uuid
+        :param sfuuid: service/function uuid that the ssm/fsm belongs to
         """
 
         self.smtype = 'fsm'
