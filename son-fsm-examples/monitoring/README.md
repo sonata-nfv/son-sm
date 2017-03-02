@@ -1,5 +1,5 @@
 # Function Specific Manager (FSM) Example
-A FSM example (monitoring fsm) that connects to Service Specific Manager(SMR) and register itself using the SSM/FSM template.
+A monitoring FSM example that connects to Service Specific Manager (SMR) and registers itself using the SSM / FSM template. Once the registration is done, it subscribes to the son.monitoring topic to receive monitoring alerts.
 
 ## Requires
 * Docker
