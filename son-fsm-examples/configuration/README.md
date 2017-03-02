@@ -1,5 +1,5 @@
 # Function Specific Manager (FSM) Example
-A configuration FSM example that connects to Service Specific Manager(SMR) and registers itself using the SSM/FSM template.
+A configuration FSM example that connects to Service Specific Manager(SMR) and registers itself using the SSM/FSM template. Once the registration is done, it subscribes to a topic (son.configuration) to receive the VNFR, that is sent by the SLM. Finally, it retrieves the VNF's IP address from the VNFR in order to get connected to the VNF to configure it.  
 
 ## Requires
 * Docker
