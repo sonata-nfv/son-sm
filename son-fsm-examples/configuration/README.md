@@ -1,5 +1,5 @@
 # Function Specific Manager (FSM) Example
-A FSM example (configuration fsm) that connects to Service Specific Manager(SMR) and register itself using the SSM/FSM template.
+A configuration FSM example that connects to Service Specific Manager(SMR) and registers itself using the SSM/FSM template.
 
 ## Requires
 * Docker
