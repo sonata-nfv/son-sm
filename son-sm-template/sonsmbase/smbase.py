@@ -131,9 +131,11 @@ class sonSMbase(object):
                                  'specific.manager.registry.ssm.registration',
                                  yaml.dump(message))
 
-    def _on_registration_response(self, ch, method, props, response):
+    def _on_registration_response(self, ch, method, props, payload):
 
-        response = yaml.load(str(response))
+        response = yaml.load(payload)
+        LOG.info(response)
+        self.uuid = response['uuid']
 
         if response['status'] != "running":
             LOG.error("{0} registration failed. Exit".format(self.name))
