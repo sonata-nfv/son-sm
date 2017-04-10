@@ -30,6 +30,7 @@ from multiprocessing import Process
 from test.fakessm import fakeSM
 from sonsmbase.messaging import ManoBrokerRequestResponseConnection
 
+
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('amqp-storm').setLevel(logging.INFO)
 LOG = logging.getLogger("son-mano-plugins:sm_template_test")
