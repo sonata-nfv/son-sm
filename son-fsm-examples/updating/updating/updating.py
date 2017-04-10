@@ -56,9 +56,10 @@ class DumbFSM(sonSMbase):
         self.specific_manager_type = 'fsm'
         self.service_name = 'service1'
         self.function_name = 'function1'
-        self.specific_manager_name = 'dumb'
+        self.specific_manager_name = 'updateddumb'
         self.id_number = '1'
-        self.version = 'v0.1'
+        self.version = 'v0.2'
+        self.update_version = 'true'
         self.description = "An empty FSM"
 
         super(self.__class__, self).__init__(specific_manager_type= self.specific_manager_type,
@@ -66,15 +67,17 @@ class DumbFSM(sonSMbase):
                                              function_name= self.function_name,
                                              specific_manager_name = self.specific_manager_name,
                                              id_number = self.id_number,
+                                             update_version= self.update_version,
                                              version = self.version,
                                              description = self.description)
 
     def on_registration_ok(self):
         LOG.debug("Received registration ok event.")
 
-        # send the status to the SMR
+        # send the status to SMR
         self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
-                                  {'name':self.specific_manager_id,'status': 'UP and Running'}))
+                                  {'name':self.specific_manager_id,'status': 'Updated version of dumb FSM is UP and '
+                                                                             'Running'}))
 
 def main():
     DumbFSM()

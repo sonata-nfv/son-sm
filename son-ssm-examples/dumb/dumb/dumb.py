@@ -31,12 +31,12 @@ import yaml
 from sonsmbase.smbase import sonSMbase
 
 logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger("fsm-dumb-1")
+LOG = logging.getLogger("ssm-dumb-1")
 LOG.setLevel(logging.DEBUG)
 logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 
 
-class DumbFSM(sonSMbase):
+class DumbSSM(sonSMbase):
 
     def __init__(self):
 
@@ -47,23 +47,18 @@ class DumbFSM(sonSMbase):
         :param specific_manager_name: the actual name of specific manager (e.g., scaling, placement)
         :param id_number: the specific manager id number which is used to distinguish between multiple SSM/FSM
         that are created for the same objective (e.g., scaling with algorithm 1 and 2)
-        :param updated_version: specifies whether this SM is developed to update a current version or not,should be
-        filled either by 'true' or 'false'
         :param version: version
         :param description: description
         """
-
-        self.specific_manager_type = 'fsm'
+        self.specific_manager_type = 'ssm'
         self.service_name = 'service1'
-        self.function_name = 'function1'
         self.specific_manager_name = 'dumb'
         self.id_number = '1'
         self.version = 'v0.1'
-        self.description = "An empty FSM"
+        self.description = "An empty SSM"
 
         super(self.__class__, self).__init__(specific_manager_type= self.specific_manager_type,
                                              service_name= self.service_name,
-                                             function_name= self.function_name,
                                              specific_manager_name = self.specific_manager_name,
                                              id_number = self.id_number,
                                              version = self.version,
@@ -71,13 +66,11 @@ class DumbFSM(sonSMbase):
 
     def on_registration_ok(self):
         LOG.debug("Received registration ok event.")
-
-        # send the status to the SMR
         self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
                                   {'name':self.specific_manager_id,'status': 'UP and Running'}))
 
 def main():
-    DumbFSM()
+    DumbSSM()
 
 if __name__ == '__main__':
     main()

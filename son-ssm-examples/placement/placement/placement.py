@@ -37,38 +37,63 @@ logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 
 
 class PlacementSSM(sonSMbase):
+
     def __init__(self):
 
-        self.smtype = 'ssm'
-        self.sfname = 'default'
-        self.name = 'placement'
-        self.id = '1'
+        """
+        :param specific_manager_type: specifies the type of specific manager that could be either fsm or ssm.
+        :param service_name: the name of the service that this specific manager belongs to.
+        :param function_name: the name of the function that this specific manager belongs to, will be null in SSM case
+        :param specific_manager_name: the actual name of specific manager (e.g., scaling, placement)
+        :param id_number: the specific manager id number which is used to distinguish between multiple SSM/FSM
+        that are created for the same objective (e.g., scaling with algorithm 1 and 2)
+        :param version: version
+        :param description: description
+        """
+        self.specific_manager_type = 'ssm'
+        self.service_name = 'service1'
+        self.specific_manager_name = 'placement'
+        self.id_number = '1'
         self.version = 'v0.1'
-        self.description = 'Placement SSM'
+        self.description = "Placement SSM"
 
-        super(self.__class__, self).__init__(smtype= self.smtype,
-                                             sfname= self.sfname,
-                                             name= self.name,
-                                             id = self.id,
-                                             version= self.version,
-                                             description= self.description)
+        super(self.__class__, self).__init__(specific_manager_type= self.specific_manager_type,
+                                             service_name= self.service_name,
+                                             specific_manager_name = self.specific_manager_name,
+                                             id_number = self.id_number,
+                                             version = self.version,
+                                             description = self.description)
+
 
     def on_registration_ok(self):
+
         LOG.debug("Received registration ok event.")
 
-        # Register to task topic and to place topic
-        topic = 'placement.ssm' + self.sfuuid
+        # For testing, here we set the service uuid.
+        # In the actual scenario this should be set by SLM and SMR during the SSM instantiation.
+        self.sfuuid = '1234'
 
-        self.manoconn.subscribe(self.on_place,topic= topic)
+        # Register to placement topic.
+        topic = 'placement.ssm.' + self.sfuuid
 
-        print(topic)
+        self.manoconn.register_async_endpoint(self.on_place,topic= topic)
+
+        LOG.info("Subscribed to {0}".format(topic))
 
     def on_place(self, ch, method, properties, payload):
 
-        if properties.app_id != self.name:
-            message = {'placement': ['from_ssm']}
-            payload = yaml.dump(message)
-            self.manoconn.notify(topic= 'placement.ssm' + self.uuid , msg= payload, correlation_id=properties.correlation_id)
+
+        if properties.app_id != self.specific_manager_id:
+
+            LOG.info("Placement request received: {0}".format(payload))
+            payload = {'placement': ['from_ssm']}
+            LOG.info("Placement decision was sent: {0}".format(payload))
+
+            # send the status to the SMR (not necessary)
+            self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
+                {'name': self.specific_manager_id, 'status': "Placement decision was sent: {0}".format(payload)}))
+
+        return (yaml.dump(payload))
 
 def main():
     PlacementSSM()

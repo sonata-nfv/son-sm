@@ -97,14 +97,14 @@ class testSMTemplate(unittest.TestCase):
 
             # CHECK: The message should be a dictionary.
             self.assertTrue(isinstance(msg, dict), msg='message is not a dictionary')
-            # CHECK: The dictionary should have a key 'name'.
-            self.assertIn('name', msg.keys(), msg='No name provided in message.')
-            if isinstance(msg['name'], str):
-                # CHECK: The value of 'name' should not be an empty string.
-                self.assertTrue(len(msg['name']) > 0, msg='empty name provided.')
+            # CHECK: The dictionary should have a key 'specific_manager_name'.
+            self.assertIn('specific_manager_name', msg.keys(), msg='no specific_manager_name provided in message.')
+            if isinstance(msg['specific_manager_name'], str):
+                # CHECK: The value of 'specific_manager_name' should not be an empty string.
+                self.assertTrue(len(msg['specific_manager_name']) > 0, msg='empty specific_manager_name provided.')
             else:
-                # CHECK: The value of 'name' should be a string
-                self.assertEqual(True, False, msg='name is not a string')
+                # CHECK: The value of 'specific_manager_name' should be a string
+                self.assertEqual(True, False, msg='specific_manager_name is not a string')
             # CHECK: The dictionary should have a key 'version'.
             self.assertIn('version', msg.keys(), msg='No version provided in message.')
             if isinstance(msg['version'], str):
@@ -122,29 +122,29 @@ class testSMTemplate(unittest.TestCase):
                 # CHECK: The value of 'description' should be a string
                 self.assertEqual(True, False, msg='description is not a string')
 
-            # CHECK: The dictionary should have a key 'smtype'
-            if isinstance(msg['smtype'], str):
-                # CHECK: The value of 'smtype' should not be an empty string.
-                self.assertTrue(len(msg['smtype']) > 0, msg='empty ssmtype provided.')
+            # CHECK: The dictionary should have a key 'specific_manager_type'
+            if isinstance(msg['specific_manager_type'], str):
+                # CHECK: The value of 'specific_manager_type' should not be an empty string.
+                self.assertTrue(len(msg['specific_manager_type']) > 0, msg='empty specific_manager_type provided.')
             else:
-                # CHECK: The value of 'smtype' should be a string
-                self.assertEqual(True, False, msg='smtype is not a string')
+                # CHECK: The value of 'specific_manager_type' should be a string
+                self.assertEqual(True, False, msg='specific_manager_type is not a string')
 
             # CHECK: The dictionary should have a key 'id'
-            if isinstance(msg['id'], str):
+            if isinstance(msg['id_number'], str):
                 # CHECK: The value of 'id' should not be an empty string.
-                self.assertTrue(len(msg['id']) > 0, msg='empty id provided.')
+                self.assertTrue(len(msg['id_number']) > 0, msg='empty id provided.')
             else:
                 # CHECK: The value of 'id' should be a string
-                self.assertEqual(True, False, msg='id is not a string')
+                self.assertEqual(True, False, msg='id_number is not a string')
 
-            # CHECK: The dictionary should have a key 'sfname'
-            if isinstance(msg['sfname'], str):
-                # CHECK: The value of 'sfname' should not be an empty string.
-                self.assertTrue(len(msg['sfname']) > 0, msg='empty id provided.')
+            # CHECK: The dictionary should have a key 'service_name'
+            if isinstance(msg['service_name'], str):
+                # CHECK: The value of 'service_name' should not be an empty string.
+                self.assertTrue(len(msg['service_name']) > 0, msg='empty service_name id provided.')
             else:
-                # CHECK: The value of 'sfname' should be a string
-                self.assertEqual(True, False, msg='sfname is not a string')
+                # CHECK: The value of 'service_name' should be a string
+                self.assertEqual(True, False, msg='service_name is not a string')
 
             # stop waiting
             self.eventFinished()

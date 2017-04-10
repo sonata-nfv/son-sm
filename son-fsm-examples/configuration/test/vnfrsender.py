@@ -22,10 +22,9 @@ partner consortium (www.sonata-nfv.eu).
 """
 
 import logging
-import json
+import yaml
 import time
-import os
-from sonmanobase import messaging
+from sonsmbase import messaging
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger("son-mano-fakeslm")
@@ -36,16 +35,15 @@ logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 class fakealert(object):
     def __init__(self):
 
-        self.name = 'fake-alert'
+        self.name = 'fake-vnfr'
         self.version = '0.1-dev'
         self.description = 'description'
 
-        LOG.info("Starting alert:...")
+        LOG.info("Start sending VNFR:...")
 
         # create and initialize broker connection
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
 
-        self.path_descriptors = 'test/test_descriptors/'
         self.end = False
 
         self.publish_nsd()
@@ -61,15 +59,10 @@ class fakealert(object):
 
     def publish_nsd(self):
 
-        LOG.info("Sending alert request")
-
-        message = {"exported_instance": "fw-vnf","core": "cpu","group": "development","exported_job": "vnf","value": "1",
-                   "instance": "pushgateway:9091","job": "sonata","serviceID": "263fd6b7-8cfb-4149-b6c1-fb082553ca71",
-                   "alertname": "mon_rule_vm_cpu_usage_85_perc","time": "2016-09-13T17:29:22.807Z","inf": "None","alertstate": "firing",
-                   "id": "01ccc69f-c925-42f5-9418-e1adb075527e","monitor": "sonata-monitor"}
-
-
-        self.manoconn.publish('son.monitoring',json.dumps(message))
+        LOG.info("Sending VNFR")
+        vnfr = open('vnfr.yml', 'r')
+        message = {'VNFR':yaml.load(vnfr)}
+        self.manoconn.publish('son.configuration',yaml.dump(message))
 
 
 def main():

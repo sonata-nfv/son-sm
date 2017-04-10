@@ -51,24 +51,26 @@ class fakeSM(sonSMbase):
         :param description: a description on what does FSM/SSM do
         """
 
-        self.smtype = 'ssm'
-        self.sfname = 'tester'
-        self.name = 'fakesm'
-        self.id = '1'
+        self.specific_manager_type = 'ssm'
+        self.service_name = 'service1'
+        self.function_name = 'function1'
+        self.specific_manager_name = 'tester'
+        self.id_number = '1'
         self.version = 'v0.1'
-        self.description = 'Template tester'
+        self.description = "template tester"
 
-        super(self.__class__, self).__init__(smtype= self.smtype,
-                                             sfname= self.sfname,
-                                             name = self.name,
-                                             id = self.id,
+        super(self.__class__, self).__init__(specific_manager_type= self.specific_manager_type,
+                                             service_name= self.service_name,
+                                             function_name= self.function_name,
+                                             specific_manager_name = self.specific_manager_name,
+                                             id_number = self.id_number,
                                              version = self.version,
                                              description = self.description)
 
     def on_registration_ok(self):
         LOG.debug("Received registration ok event.")
         self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
-                                  {'name':self.name,'status': 'UP and Running'}))
+                                  {'name':self.specific_manager_name,'status': 'UP and Running'}))
 
 def main():
     fakeSM()

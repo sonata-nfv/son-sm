@@ -47,7 +47,7 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.0.1',
 
-    description='Placement Service specific manager',
+    description='Placement SSM example',
     long_description=long_description,
 
     # The project's main homepage.
@@ -64,7 +64,7 @@ setup(
     keywords='NFV orchestrator',
 
     packages=find_packages("placement"),
-    install_requires=['pika', 'pytest', 'mongoengine', 'Flask>=0.10.1', 'flask-restful', 'requests'],
+    install_requires=['pika', 'pytest'],
     setup_requires=['pytest-runner'],
 
     # To provide executable scripts, use entry points in preference to the

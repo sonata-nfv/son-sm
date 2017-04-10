@@ -41,12 +41,9 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='configuration',
 
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
-    version='v0.1',
+    version='0.1',
 
-    description='Function specific manager',
+    description='Configuration FSM example',
     long_description=long_description,
 
     # The project's main homepage.
@@ -63,7 +60,7 @@ setup(
     keywords='NFV orchestrator',
 
     packages=find_packages("configuration"),
-    install_requires=['pika', 'pytest', 'mongoengine', 'Flask>=0.10.1', 'flask-restful', 'requests'],
+    install_requires=['pytest'],
     setup_requires=['pytest-runner'],
 
     # To provide executable scripts, use entry points in preference to the

@@ -36,12 +36,9 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='sonsmbase',
 
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.9',
+    version='1.0',
 
-    description='SONATA MANO framework funcrion/service specific manager template',
+    description='SONATA FSM/SSM template',
     long_description=long_description,
 
     # The project's main homepage.
@@ -58,6 +55,7 @@ setup(
     keywords='NFV orchestrator',
 
     packages=find_packages(),
-    install_requires=['amqpstorm', 'pytest', 'PyYAML', 'requests'],
+    install_requires=['amqpstorm', 'pytest', 'PyYAML'],
     setup_requires=['pytest-runner'],
+
 )

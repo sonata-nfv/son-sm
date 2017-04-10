@@ -30,6 +30,7 @@ import yaml
 import time
 import threading
 import os
+import re
 from sonsmbase import messaging
 
 
@@ -42,41 +43,51 @@ logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 class sonSMbase(object):
 
     def __init__(self,
-                 smtype = None,
-                 sfname = None,
-                 name= None,
-                 id = None,
+                 specific_manager_type = None,
+                 service_name = None,
+                 function_name = None,
+                 specific_manager_name= None,
+                 id_number = None,
+                 update_version = 'false',
                  version= None,
                  description=None):
         """
-        # FSM/SSM name consists of son,smtype(either ssm or fsm), sfname, name (a-z), and an id (0-9)
-
-        :param smtype: specific management type: either fsm or ssm
-        :param sfname: the name of service or function that ssm/fsm belongs to
-        :param name: the name of the FSM/SSM
-        :param id: an id number that differentiates same SMs(with different characteristics) belonging to the same service.
-        :param version: SSM/FSM version
-        :param description: a description on what does FSM/SSM do
-        :param uuid: SSM/FSM uuid
-        :param sfuuid: service/function uuid that the FSM/SSM belongs to
+        :param specific_manager_type: specifies the type of specific manager that could be either fsm or ssm.
+        :param service_name: the name of the service that this specific manager belongs to.
+        :param function_name: the name of the function that this specific manager belongs to, will be null in SSM case
+        :param specific_manager_name: the actual name of specific manager (e.g., scaling, placement)
+        :param id_number: the specific manager id number which is used to distinguish between multiple SSM/FSM
+        that are created for the same objective (e.g., scaling with algorithm 1 and 2)
+        :param updated_version: specifies whether this SM is developed to update a current version or not,should be
+        filled either by 'true' or 'false'
+        :param version: version
+        :param description: description
         """
         #checks if the chosen name by develeopr is correct format
-        self.name_validation(self.smtype, self.sfname, self.name, self.id)
+        self.name_validation(specific_manager_type, service_name, function_name, specific_manager_name, id_number)
 
         #Populating SSM-FSM fileds
-        self.smtype = smtype
-        self.sfname = sfname
-        self.id = id
-        self.name = "son{0}{1}{2}{3}".format(smtype, sfname, name, id)
+        self.specific_manager_type = specific_manager_type
+        self.service_name = service_name
+        self.function_name = function_name
+        self.specific_manager_name = specific_manager_name
+        self.id_number = id_number
+        if self.specific_manager_type == 'fsm':
+            self.specific_manager_id = "son{0}{1}{2}{3}{4}".\
+                format(specific_manager_type, service_name, function_name, specific_manager_name, id_number)
+        else:
+            self.specific_manager_id = "son{0}{1}{2}{3}".\
+                format(specific_manager_type, service_name, specific_manager_name, id_number)
         self.version = version
         self.description = description
+        self.update_version = update_version
         self.uuid = None
         self.sfuuid = None
 
-        LOG.info("Starting {0} ...".format(self.name))
+        LOG.info("Starting {0} ...".format(self.specific_manager_id))
 
         # create and initialize broker connection
-        self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
+        self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.specific_manager_id)
 
         self.tLock = threading.Lock()
         t1 = threading.Thread(target=self.registration)
@@ -91,19 +102,23 @@ class sonSMbase(object):
         # jump to run
         t2.start()
 
-    def name_validation(self, smtype, sfname, name, id):
+    def name_validation(self, smtype, sname, fname, name, id):
 
         if smtype != 'ssm' and smtype != 'fsm':
-            LOG.error("Name Error: smtype must be either ssm or fsm")
+            LOG.error("Invalid type: ({0}), specific_manager_type must be either ssm or fsm".format(smtype))
             exit(1)
-        if not sfname.isalpha() and not name.islower():
-            LOG.error("Name Error: sfname must be (a-z)")
+        if not re.match("^[a-zA-Z0-9][a-zA-Z0-9_.-]*$", sname):
+            LOG.error("Invalid service name: ({0}), only [a-zA-Z0-9][a-zA-Z0-9_.-] are allowed".format(sname))
             exit(1)
-        if not name.isalpha() and not name.islower():
-            LOG.error("Name Error: name must be (a-z)")
+        if fname != None:
+            if not re.match("^[a-zA-Z0-9][a-zA-Z0-9_.-]*$", fname):
+                LOG.error("Invalid function name: ({0}), only [a-zA-Z0-9][a-zA-Z0-9_.-] are allowed".format(sname))
+                exit(1)
+        if not re.match("^[a-zA-Z0-9][a-zA-Z0-9_.-]*$", name):
+            LOG.error("Invalid service name: ({0}), only [a-zA-Z0-9][a-zA-Z0-9_.-] are allowed".format(sname))
             exit(1)
         if not id.isdigit():
-            LOG.error("Name Error: id must be (0-9)")
+            LOG.error("Invalid id number: ({0}), only (0-9) are allowed".format(id))
             exit(1)
 
 
@@ -120,13 +135,14 @@ class sonSMbase(object):
 
         """
         self.tLock.acquire()
-        message = {'smtype': self.smtype,
-                   'sfname': self.sfname,
-                   'name': self.name,
-                   'id':self.id,
+        message = {'specific_manager_type': self.specific_manager_name,
+                   'service_name': self.service_name,
+                   'function_name': self.function_name,
+                   'specific_manager_name': self.specific_manager_name,
+                   'specific_manager_id': self.specific_manager_id,
+                   'update_version': self.update_version,
                    'version': self.version,
                    'description': self.description}
-
         self.manoconn.call_async(self._on_registration_response,
                                  'specific.manager.registry.ssm.registration',
                                  yaml.dump(message))
@@ -134,15 +150,13 @@ class sonSMbase(object):
     def _on_registration_response(self, ch, method, props, response):
 
         response = yaml.load(str(response))
-
-        if response['status'] != "running":
-            LOG.error("{0} registration failed. Exit".format(self.name))
-            exit(1)
+        if response['status'] != "registered":
+            LOG.error("{0} registration failed. Exit".format(self.specific_manager_id))
         else:
             self.uuid = response['uuid']
             if 'sf_uuid' in os.environ:
                 self.sfuuid = os.environ['sf_uuid']
-            LOG.info("{0} registered with uuid:{1}".format(self.name, self.uuid))
+            LOG.info("{0} registered with uuid:{1}".format(self.specific_manager_id, self.uuid))
 
             # release the registration thread
             self.tLock.release()

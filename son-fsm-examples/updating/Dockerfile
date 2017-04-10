@@ -28,14 +28,15 @@ ENV mongo_port 27017
 ENV broker_host amqp://guest:guest@broker:5672/%2F
 ENV broker_exchange son-kernel
 
-ADD son-ssm-examples/placement /placement
+ADD son-fsm-examples/updating /updating
 ADD son-sm-template /son-sm-template
 ADD utils/delayedstart.sh /delayedstart.sh
 
 WORKDIR /son-sm-template
 RUN python setup.py install
 
-WORKDIR /placement
+WORKDIR /updating
 RUN python setup.py develop
 
-CMD ["placement"]
+CMD ["updating"]
+

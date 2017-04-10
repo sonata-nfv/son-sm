@@ -41,49 +41,59 @@ class MonitoringFSM(sonSMbase):
     def __init__(self):
 
         """
-        # FSM/SSM name consists of son,smtype(either ssm or fsm),sfname, name (a-z), and an id (0-9)
-
-        :param smtype: specific management type: either fsm or ssm
-        :param sfname: the name of service or function that ssm/fsm belongs to
-        :param name: the name of FSM/SSM
-        :param id: the Id of FSM/SSM, is used to distinguish between multiple SSM/FSM that are created for the same service
+        :param specific_manager_type: specifies the type of specific manager that could be either fsm or ssm.
+        :param service_name: the name of the service that this specific manager belongs to.
+        :param function_name: the name of the function that this specific manager belongs to, will be null in SSM case
+        :param specific_manager_name: the actual name of specific manager (e.g., scaling, placement)
+        :param id_number: the specific manager id number which is used to distinguish between multiple SSM/FSM
+        that are created for the same objective (e.g., scaling with algorithm 1 and 2)
         :param version: version
-        :param description: a description on what does FSM/SSM do
-        :param uuid: SSM/FSM uuid
-        :param sfuuid: service/function uuid that the ssm/fsm belongs to
+        :param description: description
         """
 
-        self.smtype = 'fsm'
-        self.sfname = 'function'
-        self.name = 'monitoring'
-        self.id = '1'
+        self.specific_manager_type = 'fsm'
+        self.service_name = 'service1'
+        self.function_name = 'function1'
+        self.specific_manager_name = 'monitoring'
+        self.id_number = '1'
         self.version = 'v0.1'
-        self.description = 'Monitoring FSM'
+        self.description = "An FSM that subscribes to monitoring topic"
 
-        super(self.__class__, self).__init__(smtype= self.smtype,
-                                             sfname= self.sfname,
-                                             name = self.name,
-                                             id = self.id,
+        super(self.__class__, self).__init__(specific_manager_type= self.specific_manager_type,
+                                             service_name= self.service_name,
+                                             function_name= self.function_name,
+                                             specific_manager_name = self.specific_manager_name,
+                                             id_number = self.id_number,
                                              version = self.version,
                                              description = self.description)
 
     def on_registration_ok(self):
+
         LOG.debug("Received registration ok event.")
         self.manoconn.subscribe(self.on_alert_received, 'son.monitoring')
         LOG.debug("Subscribed to son.monitoring topic.")
+
+        # send the status to the SMR
         self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
-                                  {'name':self.name,'status': 'Subscribed to son.monitoring topic, waiting for alert message'}))
+                                  {'name':self.specific_manager_id,'status':
+                                      'Subscribed to son.monitoring topic, waiting for alert message'}))
 
     def on_alert_received(self, ch, method, props, response):
 
-        # to be overwritten by subclasses
         alert = yaml.load(response)
+
+        #filtering incoming alerts
         if alert['alertname'] == 'mon_rule_vm_cpu_usage_85_perc' and alert['exported_job'] == "vnf":
             LOG.info('Alert message received')
-            LOG.info('Start reconfiguring vFW ...')
 
+            # send the status to the SMR
             self.manoconn.publish(topic='specific.manager.registry.ssm.status',
-                                  message=yaml.dump({'name':self.name, 'status': 'cpu usage 85% alert message received, start reconfiguring vFW'}))
+                                  message=yaml.dump({'name':self.specific_manager_id, 'status':
+                                      'cpu usage 85% alert message received'}))
+            '''
+            Now that the alert message is received, you can react to it by calling a function that performs your intent
+            for this FSM.
+            '''
 
 def main():
     MonitoringFSM()

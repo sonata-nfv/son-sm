@@ -1,5 +1,5 @@
-# Dumb FSM Example
-An empty FSM example that connects to Service Specific Manager (SMR) and performs a self-registration using the SSM/FSM template.
+# Updating an FSM example (in progress)
+An example that updates the dumb FSM
 
 ## Requires
 * Docker
@@ -19,8 +19,8 @@ An empty FSM example that connects to Service Specific Manager (SMR) and perform
 
 * Run the dumb FSM (in a Docker container):
  * (do in `son-sm/`)
- * `docker build -t sonfsmservice1function1dumb1 -f son-fsm-examples/dumb/Dockerfile .`
- * `docker run -it --rm --link broker:broker  --name sonfsmservice1function1dumb1  sonfsmservice1function1dumb1`
+ * `docker build -t sonfsmservice1function1updateddumb1 -f son-fsm-examples/updating/Dockerfile .`
+ * `docker run -it --rm --link broker:broker  --name sonfsmservice1function1dumb1  sonfsmservice1function1updateddumb1`
 
 * Or: Run the dumb FSM (directly in your terminal not in a Docker container):
  * (In `son-sm/son-sm-template/`)

@@ -39,18 +39,18 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='monitoring',
+    name='dumb',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
     version='v0.1',
 
-    description='Monitoring FSM example',
+    description='An empty FSM',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/sonata-nfv/son-sm/tree/master/son-fsm-examples',
+    url='https://github.com/sonata-nfv/son-sm/tree/master/son-ssm-examples',
 
     # Author details
     author='Hadi Razzaghi Kouchaksaraei',
@@ -62,7 +62,7 @@ setup(
     # What does your project relate to?
     keywords='NFV orchestrator',
 
-    packages=find_packages("monitoring"),
+    packages=find_packages("dumb"),
     install_requires=['pika', 'pytest'],
     setup_requires=['pytest-runner'],
 
@@ -70,6 +70,6 @@ setup(
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
-        'console_scripts': ['monitoring=monitoring.__main__:main'],
+        'console_scripts': ['dumb=dumb.__main__:main'],
     },
 )

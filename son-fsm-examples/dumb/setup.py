@@ -46,7 +46,7 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='v0.1',
 
-    description='Function specific manager',
+    description='An empty FSM',
     long_description=long_description,
 
     # The project's main homepage.
@@ -63,7 +63,7 @@ setup(
     keywords='NFV orchestrator',
 
     packages=find_packages("dumb"),
-    install_requires=['pika', 'pytest', 'mongoengine', 'Flask>=0.10.1', 'flask-restful', 'requests'],
+    install_requires=['pika', 'pytest'],
     setup_requires=['pytest-runner'],
 
     # To provide executable scripts, use entry points in preference to the

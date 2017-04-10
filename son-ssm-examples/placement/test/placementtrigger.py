@@ -24,11 +24,10 @@ partner consortium (www.sonata-nfv.eu).
 import logging
 import yaml
 import time
-import os
 from sonmanobase import messaging
 
 logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger("son-mano-fakeslm")
+LOG = logging.getLogger("placement-trigger")
 LOG.setLevel(logging.DEBUG)
 logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 
@@ -36,16 +35,16 @@ logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 class fakealert(object):
     def __init__(self):
 
-        self.name = 'fake-vnfr'
-        self.version = '0.1-dev'
+        self.name = 'placement-trigger'
+        self.version = '0.1'
         self.description = 'description'
 
-        LOG.info("Start sending VNFR:...")
+        LOG.info("Starting triggering placement SSM:...")
 
         # create and initialize broker connection
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
 
-        #self.path_descriptors = 'test/test_descriptors/'
+        self.path_descriptors = 'test/test_descriptors/'
         self.end = False
 
         self.publish_nsd()
@@ -61,11 +60,21 @@ class fakealert(object):
 
     def publish_nsd(self):
 
-        LOG.info("Sending VNFR")
-        vnfr = open('vnfr.yml', 'r')
-        message = {'VNFR':yaml.load(vnfr)}
-        self.manoconn.publish('son.configuration',yaml.dump(message))
+        LOG.info("Sending placement request")
 
+        message = {"cpu": "20","memory": "30","location": "DE"}
+
+        service_uuid= '1234'
+
+        self.manoconn.call_async(self.on_publish_response,
+                                 'placement.ssm.'+service_uuid,
+                                 yaml.dump(message))
+
+    def on_publish_response(self, ch, method, props, response):
+
+        response = yaml.load(str(response))
+        if type(response) == dict:
+            print(response)
 
 def main():
     fakealert()
