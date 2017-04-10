@@ -34,12 +34,12 @@
 #
 
 # setup cleanup mechanism
-trap "set +e; docker rm -fv test.broker" INT TERM EXIT
+trap "set +e; docker rm -fv test.broker; docker rm -fv test.smtemplate " INT TERM EXIT
 
 # ensure cleanup
 set +e
 docker rm -fv test.broker
-
+docker rm test.smtemplate
 #  always abort if an error occurs
 set -e
 
