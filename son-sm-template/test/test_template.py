@@ -130,14 +130,6 @@ class testSMTemplate(unittest.TestCase):
                 # CHECK: The value of 'specific_manager_type' should be a string
                 self.assertEqual(True, False, msg='specific_manager_type is not a string')
 
-            # CHECK: The dictionary should have a key 'id'
-            if isinstance(msg['id_number'], str):
-                # CHECK: The value of 'id' should not be an empty string.
-                self.assertTrue(len(msg['id_number']) > 0, msg='empty id provided.')
-            else:
-                # CHECK: The value of 'id' should be a string
-                self.assertEqual(True, False, msg='id_number is not a string')
-
             # CHECK: The dictionary should have a key 'service_name'
             if isinstance(msg['service_name'], str):
                 # CHECK: The value of 'service_name' should not be an empty string.
