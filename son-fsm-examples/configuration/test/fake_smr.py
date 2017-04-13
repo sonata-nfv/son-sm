@@ -27,47 +27,59 @@ import time
 from sonmanobase import messaging
 
 logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger("son-mano-fakeflm")
+LOG = logging.getLogger("son-mano-fakesmr")
 LOG.setLevel(logging.DEBUG)
 logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 
 
-class fakeflm(object):
+class fakesmr(object):
+
     def __init__(self):
 
-        self.name = 'fake-slm'
+        self.name = 'fake-smr'
         self.version = '0.1-dev'
         self.description = 'description'
 
-        LOG.info("Start sending VNFR:...")
+        LOG.info("Start SMR:...")
 
         # create and initialize broker connection
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
 
-        self.end = False
+        #elf.end = False
 
-        self.publish_nsd()
+        #self.publish_nsd()
 
-        self.run()
+        self.declare_subscriptions()
 
-    def run(self):
+    def declare_subscriptions(self):
+        """
+        Declare topics to which we want to listen and define callback methods.
+        """
+        self.manoconn.register_async_endpoint(self.on_register_receive, 'specific.manager.registry.ssm.registration')
+
+    def on_register_receive(self,ch, method, properties, payload):
 
         # go into infinity loop
+        message = yaml.load(payload)
 
-        while self.end == False:
-            time.sleep(1)
+        response = {
+            "status": "registered",
+            "specific_manager_type": message['specific_manager_type'],
+            "service_name": message['service_name'],
+            "function_name": message['function_name'],
+            "specific_manager_id": message['specific_manager_id'],
+            "version": message['version'],
+            "description": message['description'],
+            "uuid": '23345',
+            "sfuuid": None,
+            "error": None
+        }
 
-    def publish_nsd(self):
-
-        LOG.info("Sending VNFR")
-        vnfr = open('vnfr.yml', 'r')
-        message = {'VNFR':yaml.load(vnfr)}
-        self.manoconn.publish('son.configuration',yaml.dump(message))
-        vnfr.close()
+        return yaml.dump(response)
 
 
 def main():
-    fakeflm()
+    fakesmr()
 
 
 if __name__ == '__main__':

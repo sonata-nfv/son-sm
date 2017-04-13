@@ -15,3 +15,6 @@ More details about FSM/SSM template are available on the following link:
 
 * To run the unit tests of the template individually, run the following from the root of the repo:
  * ./test/test_son-sm-template.sh
+
+## Build
+`docker build -t registry.sonata-nfv.eu:5000/smtemplate -f son-sm-template/Dockerfile .`

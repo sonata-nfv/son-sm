@@ -28,7 +28,7 @@ import logging
 
 from multiprocessing import Process
 from test.fakessm import fakeSM
-from sonsmbase.messaging import ManoBrokerRequestResponseConnection
+from sonmanobase.messaging import ManoBrokerRequestResponseConnection
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('amqp-storm').setLevel(logging.INFO)

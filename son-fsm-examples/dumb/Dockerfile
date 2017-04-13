@@ -29,8 +29,12 @@ ENV broker_host amqp://guest:guest@broker:5672/%2F
 ENV broker_exchange son-kernel
 
 ADD son-fsm-examples/dumb /dumb
+ADD son-mano-framework/son-mano-base /son-mano-base
 ADD son-sm-template /son-sm-template
 ADD utils/delayedstart.sh /delayedstart.sh
+
+WORKDIR /son-mano-base
+Run python setup.py install
 
 WORKDIR /son-sm-template
 RUN python setup.py install
