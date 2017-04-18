@@ -31,7 +31,7 @@ import time
 import threading
 import os
 import re
-from sonsmbase import messaging
+from sonmanobase import messaging
 
 
 logging.basicConfig(level=logging.INFO)
@@ -135,7 +135,7 @@ class sonSMbase(object):
 
         """
         self.tLock.acquire()
-        message = {'specific_manager_type': self.specific_manager_name,
+        message = {'specific_manager_type': self.specific_manager_type,
                    'service_name': self.service_name,
                    'function_name': self.function_name,
                    'specific_manager_name': self.specific_manager_name,

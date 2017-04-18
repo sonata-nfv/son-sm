@@ -81,25 +81,28 @@ class ConfigurationFSM(sonSMbase):
 
     def on_configuration(self, ch, method, props, response):
 
-        LOG.info('Start retrieving the IP address ...')
-        response = yaml.load(str(response))
-        list = response['VNFR']
-        host_ip = None
-        for x in range(len(list)):
-            if response['VNFR'][x]['virtual_deployment_units'][0]['vm_image'] == 'sonata-vfw':
-                host_ip = response['VNFR'][x]['virtual_deployment_units']\
-                    [0]['vnfc_instance'][0]['connection_points'][0]['type']['address']
+        if props.app_id != self.specific_manager_id:
+            LOG.info('Start retrieving the IP address ...')
+            response = yaml.load(str(response))
+            list = response['VNFR']
+            host_ip = None
+            for x in range(len(list)):
+                if response['VNFR'][x]['virtual_deployment_units'][0]['vm_image'] == 'sonata-vfw':
+                    host_ip = response['VNFR'][x]['virtual_deployment_units']\
+                        [0]['vnfc_instance'][0]['connection_points'][0]['type']['address']
 
-        # send the status to the SMR (not necessary)
-        self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
-            {'name': self.specific_manager_id, 'status': "IP address:'{0}'".format(host_ip)}))
+            # send the status to the SMR (not necessary)
+            self.manoconn.publish(topic='specific.manager.registry.ssm.status', message=yaml.dump(
+                {'name': self.specific_manager_id, 'status': "IP address:'{0}'".format(host_ip)}))
 
-        LOG.info("IP address:'{0}'".format(host_ip))
+            LOG.info("IP address:'{0}'".format(host_ip))
 
-        '''
-        Now that you have the intended VNF's IP address, it is possible to configure/reconfigure the VNF either by ssh
-        to the VNF or through a REST API - depends on how the VNF is designed.
-        '''
+            '''
+            Now that you have the intended VNF's IP address, it is possible to configure/reconfigure the VNF either by ssh
+            to the VNF or through a REST API - depends on how the VNF is designed.
+            '''
+            self.manoconn.publish(topic='son.configuration', message=yaml.dump(
+                {'name': self.specific_manager_id, 'IP': host_ip}))
 
 def main():
     ConfigurationFSM()
