@@ -43,7 +43,7 @@ docker rm test.smtemplate
 #  always abort if an error occurs
 set -e
 
-echo "test_son-sm-template.sh"
+echo "ssm_test_son-sm-template.sh"
 # spin up container with broker (in daemon mode)
 docker run -d -p 5672:5672 --name test.broker rabbitmq:3
 # wait a bit for broker startup
