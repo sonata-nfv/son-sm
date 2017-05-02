@@ -26,11 +26,11 @@
 # acknowledge the contributions of their colleagues of the SONATA
 # partner consortium (www.sonata-nfv.eu).
 
-# This script runs the SSM/FSM template related tests.
+# This script runs the configuration FSM related tests.
 #
 # It starts three Docker containers:
 # - RabbitMQ
-# It triggers the unittest execution in son-sm-template
+# It triggers the unittest execution in configuration FSM example
 #
 
 # setup cleanup mechanism
