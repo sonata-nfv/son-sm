@@ -23,7 +23,6 @@ partner consortium (www.sonata-nfv.eu).
 
 import logging
 import yaml
-import time
 from sonmanobase import messaging
 
 logging.basicConfig(level=logging.INFO)
@@ -45,10 +44,6 @@ class fakesmr(object):
         # create and initialize broker connection
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
 
-        #elf.end = False
-
-        #self.publish_nsd()
-
         self.declare_subscriptions()
 
     def declare_subscriptions(self):
@@ -59,7 +54,6 @@ class fakesmr(object):
 
     def on_register_receive(self,ch, method, properties, payload):
 
-        # go into infinity loop
         message = yaml.load(payload)
 
         response = {
@@ -71,7 +65,7 @@ class fakesmr(object):
             "version": message['version'],
             "description": message['description'],
             "uuid": '23345',
-            "sfuuid": None,
+            "sfuuid": '98765',
             "error": None
         }
 

@@ -35,7 +35,7 @@ logging.getLogger("son-mano-base:messaging").setLevel(logging.INFO)
 class fakeflm(object):
     def __init__(self):
 
-        self.name = 'fake-slm'
+        self.name = 'fake-flm'
         self.version = '0.1-dev'
         self.description = 'description'
 
@@ -43,6 +43,8 @@ class fakeflm(object):
 
         # create and initialize broker connection
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.name)
+
+        self.manoconn.subscribe(self._on_publish,'son.configuration')
 
         self.end = False
 
@@ -60,10 +62,21 @@ class fakeflm(object):
     def publish_nsd(self):
 
         LOG.info("Sending VNFR")
-        vnfr = open('vnfr.yml', 'r')
+        vnfr = open('test/vnfr.yml', 'r')
         message = {'VNFR':yaml.load(vnfr)}
         self.manoconn.publish('son.configuration',yaml.dump(message))
         vnfr.close()
+        self.end = True
+
+    def _on_publish(self, ch, method, props, response):
+
+        if props.app_id != self.name:
+            response = yaml.load(response)
+            if type(response) == dict:
+                try:
+                    print(response)
+                except BaseException as error:
+                    print(error)
 
 
 def main():
