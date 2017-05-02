@@ -9,6 +9,12 @@ More details about SSMs and FSMs are available on the following link:
 
 * [SONATA: Service Programming and Orchestration for Virtualized Software Networks](http://arxiv.org/abs/1605.05850)
 
+### Cloning
+
+The following command should be used to clone the son-sm repository:
+
+`git clone --recursive https://github.com/sonata-nfv/son-sm.git`
+
 ### Contributing
 Contributing to the son-sm is really easy. You must:
 
