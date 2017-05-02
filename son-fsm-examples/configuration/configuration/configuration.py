@@ -77,7 +77,7 @@ class ConfigurationFSM(sonSMbase):
                                                               'initialising the configuration...'}))
 
         # subscribes to related topic (could be any other topic)
-        self.manoconn.subscribe(self.on_configuration, 'son.configuration')
+        self.manoconn.subscribe(self.on_configuration, topic='son.configuration')
 
     def on_configuration(self, ch, method, props, response):
 
@@ -101,8 +101,8 @@ class ConfigurationFSM(sonSMbase):
             Now that you have the intended VNF's IP address, it is possible to configure/reconfigure the VNF either by ssh
             to the VNF or through a REST API - depends on how the VNF is designed.
             '''
-            self.manoconn.publish(topic='son.configuration', message=yaml.dump(
-                {'name': self.specific_manager_id, 'IP': host_ip}))
+            self.manoconn.notify(topic='son.configuration', msg=yaml.dump({'name': self.specific_manager_id, 'IP': host_ip}))
+            return
 
 def main():
     ConfigurationFSM()

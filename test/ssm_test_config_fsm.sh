@@ -26,24 +26,24 @@
 # acknowledge the contributions of their colleagues of the SONATA
 # partner consortium (www.sonata-nfv.eu).
 
-# This script runs the SSM/FSM template related tests.
+# This script runs the configuration FSM related tests.
 #
 # It starts three Docker containers:
 # - RabbitMQ
-# It triggers the unittest execution in son-sm-template
+# It triggers the unittest execution in configuration FSM example
 #
 
 # setup cleanup mechanism
-trap "set +e; docker rm -fv test.broker; docker rm -fv test.smtemplate " INT TERM EXIT
+trap "set +e; docker rm -fv test.broker; docker rm -fv test.sonfsmservice1firewallconfiguration1 " INT TERM EXIT
 
 # ensure cleanup
 set +e
 docker rm -fv test.broker
-docker rm test.smtemplate
+docker rm -fv test.sonfsmservice1firewallconfiguration1
 #  always abort if an error occurs
 set -e
 
-echo "test_son-sm-template.sh"
+echo "ssm_test_config_fsm.sh"
 # spin up container with broker (in daemon mode)
 docker run -d -p 5672:5672 --name test.broker rabbitmq:3
 # wait a bit for broker startup
@@ -53,7 +53,7 @@ done;
 
 sleep 3
 
-docker run --link test.broker:broker --name test.smtemplate registry.sonata-nfv.eu:5000/smtemplate py.test -v
+docker run --link test.broker:broker --name test.sonfsmservice1firewallconfiguration1 sonfsmservice1firewallconfiguration1 py.test -v
 
 
 echo "done."

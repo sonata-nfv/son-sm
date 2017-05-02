@@ -29,10 +29,10 @@ import time
 import sys
 
 from multiprocessing import Process
-import vnfrsender
-import fake_smr
+from vnfrsender import fakeflm
+from fake_smr import fakesmr
 from sonmanobase import messaging
-from configuration import configuration
+from configuration.configuration import ConfigurationFSM
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('amqp-storm').setLevel(logging.INFO)
@@ -43,19 +43,64 @@ LOG.setLevel(logging.INFO)
 
 
 
-class testSMTemplate(unittest.TestCase):
+class testConfFSM(unittest.TestCase):
 
     def setUp(self):
 
+        self.slm_proc = Process(target= fakeflm)
+        self.smr_proc = Process(target= fakesmr)
+        self.con_proc = Process(target= ConfigurationFSM)
+
+        self.slm_proc.daemon = True
+        self.smr_proc.daemon = True
+        self.con_proc.daemon = True
+
         self.manoconn = messaging.ManoBrokerRequestResponseConnection('ConfTest')
 
-    def tearDown(self):
-        pass
+        self.wait_for_reg_event = threading.Event()
+        self.wait_for_reg_event.clear()
 
-    def test_configuration_registration(self):
+        self.wait_for_res_event = threading.Event()
+        self.wait_for_res_event.clear()
+
+    def tearDown(self):
+
+        if self.smr_proc is not None:
+            self.smr_proc.terminate()
+        del self.smr_proc
+
+        if self.slm_proc is not None:
+            self.slm_proc.terminate()
+        del self.slm_proc
+
+        if self.con_proc is not None:
+            self.con_proc.terminate()
+        del self.con_proc
+
+        try:
+            self.manoconn.stop_connection()
+        except Exception as e:
+            LOG.exception("Stop connection exception.")
+
+    def reg_eventFinished(self):
+        self.wait_for_reg_event.set()
+
+    def res_eventFinished(self):
+        self.wait_for_res_event.set()
+
+    def waitForRegEvent(self, timeout=5, msg="Event timed out."):
+        if not self.wait_for_reg_event.wait(timeout):
+            self.assertEqual(True, False, msg=msg)
+
+    def waitForResEvent(self, timeout=5, msg="Event timed out."):
+        if not self.wait_for_res_event.wait(timeout):
+            self.assertEqual(True, False, msg=msg)
+
+    def test_configuration_fsm(self):
 
 
         def on_register_receive(ch, method, properties, message):
+            print(properties.app_id)
 
             if properties.app_id != 'fake-smr':
                 msg = yaml.load(message)
@@ -102,9 +147,13 @@ class testSMTemplate(unittest.TestCase):
                     # CHECK: The value of 'service_name' should be a string
                     self.assertEqual(True, False, msg='service_name is not a string')
 
+                self.reg_eventFinished()
+
+
         def on_ip_receive(ch, method, properties, message):
 
-            if properties.app_id == 'fake-smr':
+            if properties.app_id == 'sonfsmservice1firewallconfiguration1':
+
                 payload = yaml.load(message)
 
                 self.assertTrue(isinstance(payload, dict), msg='message is not a dictionary')
@@ -113,19 +162,22 @@ class testSMTemplate(unittest.TestCase):
                     self.assertTrue(payload['IP'] == "10.100.32.250", msg='Wrong IP address')
                 else:
                     self.assertEqual(True, False, msg='IP address is not a string')
+            self.res_eventFinished()
 
-        fake_smr.main()
+        self.smr_proc.start()
+        #time.sleep(4)
 
         self.manoconn.subscribe(on_register_receive, 'specific.manager.registry.ssm.registration')
 
-        time.sleep(4)
-
-        configuration.main()
+        self.con_proc.start()
+        #time.sleep(4)
+        self.waitForRegEvent(timeout=5, msg="Registration request not received.")
 
         self.manoconn.subscribe(on_ip_receive, 'son.configuration')
-        time.sleep(4)
-
-        vnfrsender.main()
+        #time.sleep(4)
+        self.slm_proc.start()
+        #time.sleep(4)
+        self.waitForResEvent(timeout=5, msg="Configuration request not received.")
 
 
 
