@@ -27,7 +27,6 @@ partner consortium (www.sonata-nfv.eu).
 """
 import logging
 import yaml
-import time
 import threading
 import os
 import re
@@ -89,18 +88,11 @@ class sonSMbase(object):
         # create and initialize broker connection
         self.manoconn = messaging.ManoBrokerRequestResponseConnection(self.specific_manager_id)
 
-        self.tLock = threading.Lock()
-        t1 = threading.Thread(target=self.registration)
-        t2 = threading.Thread(target=self.run)
+        self.wait_for_event = threading.Event()
+        self.wait_for_event.clear()
 
-        # register to Specific Manager Registry
-        t1.start()
+        self.registration()
 
-        # locks the registration thread
-        self.tLock.acquire()
-
-        # jump to run
-        t2.start()
 
     def name_validation(self, smtype, sname, fname, name, id):
 
@@ -121,20 +113,14 @@ class sonSMbase(object):
             LOG.error("Invalid id number: ({0}), only (0-9) are allowed".format(id))
             exit(1)
 
-
-    def run(self):
-
-        # go into infinity loop (we could do anything here)
-        while True:
-            time.sleep(1)
-
     def registration(self):
 
         """
         Send a register request to the Specific Manager registry.
 
         """
-        self.tLock.acquire()
+        LOG.info('Sending registration request...')
+
         message = {'specific_manager_type': self.specific_manager_type,
                    'service_name': self.service_name,
                    'function_name': self.function_name,
@@ -147,9 +133,11 @@ class sonSMbase(object):
                                  'specific.manager.registry.ssm.registration',
                                  yaml.dump(message))
 
+        self.waitForRegistration()
+
     def _on_registration_response(self, ch, method, props, response):
 
-        response = yaml.load(str(response))
+        response = yaml.load(response)
         if response['status'] != "registered":
             LOG.error("{0} registration failed. Exit".format(self.specific_manager_id))
         else:
@@ -159,14 +147,18 @@ class sonSMbase(object):
             LOG.info("{0} registered with uuid:{1}".format(self.specific_manager_id, self.uuid))
 
             # release the registration thread
-            self.tLock.release()
+            self.wait_for_event.set()
 
             # jump to on_registration_ok()
             self.on_registration_ok()
 
+    def waitForRegistration(self):
+        if not self.wait_for_event.wait(20):
+            LOG.error("Registration response not received.")
 
     def on_registration_ok(self):
+
         """
         To be overwritten by subclasses
         """
-        LOG.debug("Received registration ok event.")
+        LOG.info("Received registration ok event.")
