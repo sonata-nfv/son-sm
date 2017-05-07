@@ -11,7 +11,7 @@ An example that updates the dumb SSM (in progress)
 * Dependencies: amqp-storm
 
 ## Build
-`docker build -t sonfsmservice1updateddumb1 -f son-ssm-examples/updating/Dockerfile .`
+`docker build -t sonssmservice1updateddumb1 -f son-ssm-examples/updating/Dockerfile .`
 
 ## Run
-`docker run -it --rm --link broker:broker --name sonfsmservice1updateddumb1 sonfsmservice1updateddumb1`
+`docker run -it --rm --link broker:broker --name sonssmservice1updateddumb1 sonssmservice1updateddumb1`
