@@ -57,7 +57,7 @@ while ! nc -z localhost 5672; do
 sleep 1 && echo -n .; # waiting for rabbitmq
 done;
 
-sleep 3
+sleep 10
 
 docker run --name test.sonfsmservice1firewallconfiguration1 --net=test.sonata-plugins \
 --network-alias=sonfsmservice1firewallconfiguration1 \

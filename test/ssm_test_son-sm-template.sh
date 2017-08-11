@@ -58,9 +58,9 @@ while ! nc -z localhost 5672; do
 sleep 1 && echo -n .; # waiting for rabbitmq
 done;
 
-sleep 3
+sleep 10
 
-docker run --name test.smtemplate --net=test.sonata-plugins --network-alias=smtemplate \
+docker run --name test.smtemplate --net=test.sonata-plugins --network-alias=test.smtemplate \
 registry.sonata-nfv.eu:5000/smtemplate py.test -v
 
 echo "done."
