@@ -42,10 +42,17 @@ docker rm -fv test.broker
 docker rm test.smtemplate
 #  always abort if an error occurs
 set -e
-
+set -x
 echo "ssm_test_son-sm-template.sh"
+
+#create sonata-plugins network
+if ! [[ "$(docker network inspect -f {{.Name}} test.sonata-plugins 2> /dev/null)" == "" ]]
+then docker network rm test.sonata-plugins ; fi
+docker network create test.sonata-plugins
+
+
 # spin up container with broker (in daemon mode)
-docker run -d -p 5672:5672 --name test.broker rabbitmq:3
+docker run -d -p 5672:5672 --name test.broker --net=test.sonata-plugins --network-alias=broker rabbitmq:3-management
 # wait a bit for broker startup
 while ! nc -z localhost 5672; do
 sleep 1 && echo -n .; # waiting for rabbitmq
@@ -53,7 +60,7 @@ done;
 
 sleep 3
 
-docker run --link test.broker:broker --name test.smtemplate registry.sonata-nfv.eu:5000/smtemplate py.test -v
-
+docker run --name test.smtemplate --net=test.sonata-plugins --network-alias=smtemplate \
+registry.sonata-nfv.eu:5000/smtemplate py.test -v
 
 echo "done."
