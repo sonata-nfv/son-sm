@@ -7,7 +7,7 @@ FSMs and SSMs are small programs or workflow definitions implemented by a networ
 
 More details about SSMs and FSMs are available on the following link:
 
-* [SONATA: Service Programming and Orchestration for Virtualized Software Networks](http://arxiv.org/abs/1605.05850)
+* [SONATA: Service Programming and Orchestration for Virtualized Software Networks](http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7962785)
 
 ### Cloning
 
