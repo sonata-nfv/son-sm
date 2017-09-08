@@ -15,6 +15,10 @@ The following command should be used to clone the son-sm repository:
 
 `git clone --recursive https://github.com/sonata-nfv/son-sm.git`
 
+### Wiki
+
+The son-sm documents can be found in this [wiki page](https://github.com/sonata-nfv/son-sm/wiki)
+
 ### Contributing
 Contributing to the son-sm is really easy. You must:
 
