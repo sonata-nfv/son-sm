@@ -184,8 +184,7 @@ class PlacementSSM(sonSMbase):
                                                  vnfd['virtual_deployment_units'][0]['resource_requirements']['memory'][
                                                      'size']
                             break
-            else:
-                print("++++")
+
         # Check if all VNFs have been mapped
         if len(mapping.keys()) == len(functions):
             LOG.info("Mapping succeeded: " + str(mapping))

@@ -1,4 +1,4 @@
-# PSA Pilot Placement SSM
+# vCDN Pilot Placement SSM
 Placement SSM to be used for PSA pilot.
 
 ## Requires
@@ -9,7 +9,7 @@ Placement SSM to be used for PSA pilot.
 ## Implementation
 * Implemented in Python 3.4
 * Dependencies: amqp-storm
-* The main implementation can be found in: `son-ssm-examples/PSA_placement/placement/placement.py`
+* The main implementation can be found in: `son-ssm-examples/vCDN_placement/placement/placement.py`
 
 ## How to run it
 
@@ -19,41 +19,44 @@ Placement SSM to be used for PSA pilot.
 
 * Run the placement SSM (in a Docker container):
  * (do in `son-sm/`)
- * `docker build -t sonssmpsaplacement1 -f son-ssm-examples/PSA_placement/Dockerfile .`
- * `docker run --name sonssmpsaplacement1 --net=sonata --network-alias=sonssmpsaplacement1 sonssmpsaplacement1`
+ * `docker build -t sonssmvcdnplacement1 -f son-ssm-examples/PSA_placement/Dockerfile .`
+ * `docker run --name sonssmvcdnplacement1 --net=sonata --network-alias=sonssmvcdnplacement1 sonssmvcdnplacement1`
 
 * Or: Run the placement SSM (directly in your terminal not in a Docker container):
  * (In `son-sm/son-sm-template/`)
     * `python3.4 setup.py install`
- * (In `son-sm/son-ssm-examples/PSA_placement/`)
+ * (In `son-sm/son-ssm-examples/vCDN_placement/`)
     * `python3.4 setup.py develop`
  * (In `son-sm/`)
-    * `python3.4 son-ssm-examples/PSA_placement/placement/placement.py`
+    * `python3.4 son-ssm-examples/vCDN_placement/placement/placement.py`
 
 ## How to test it
 * Do the following; each in a separate terminal.
     1. Run the fake_SMR
     2. Run the placement container
-    3. In son-sm/son-ssm-examples/PSA_placement/placement/test run python3.4 placementtrigger.py
+    3. In son-sm/son-ssm-examples/vCDN_placement/placement/test run python3.4 placementtrigger.py
 
 * The expected results are as follows:
 
     * In the placementtrigger terminal:
 
         ```
-        {'status': 'COMPLETED', 'mapping': {'vnfd2': {'vim': '1234'}, 'vnfd1': {'vim': '1234'}}, 'error': None}
+        {'error': None, 'status': 'COMPLETED', 'mapping': {'vtu-vnf': {'vim': '1234'}, 'vcc-vnf': {'vim': '1235'}, 'vtc-vnf': {'vim': '1235'}}}
         ```
 
     * In placement terminal:
 
          ```
-         INFO:son-sm-base:Starting sonssmpsaplacement1 ...
-         INFO:son-sm-base:Sending registration request...
-         INFO:son-sm-base:sonssmpsaplacement1 registered with uuid:23345
-         DEBUG:PSA-ssm-placement:Received registration ok event.
-         INFO:PSA-ssm-placement:Subscribed to placement.ssm.1234
-         INFO:PSA-ssm-placement:Placement started
-         INFO:PSA-ssm-placement:Mapping algorithm started.
-         INFO:PSA-ssm-placement:Mapping succeeded: {'vnfd1': {'vim': '1234'}, 'vnfd2': {'vim': '1234'}}
-         INFO:PSA-ssm-placement:The mapping calculation has succeeded.
+        INFO:son-sm-base:Starting sonssmvcdnplacement1 ...
+        INFO:son-sm-base:Sending registration request...
+        INFO:son-sm-base:sonssmvcdnplacement1 registered with uuid:23345
+        DEBUG:vCDN-ssm-placement:Received registration ok event.
+        INFO:vCDN-ssm-placement:Subscribed to placement.ssm.1234
+        INFO:vCDN-ssm-placement:Placement started
+        INFO:vCDN-ssm-placement:Mapping algorithm started.
+        DEBUG:vCDN-ssm-placement:VNF vcc-vnf mapped on VIM 1235
+        DEBUG:vCDN-ssm-placement:VNF vtc-vnf mapped on VIM 1235
+        DEBUG:vCDN-ssm-placement:VNF vtu-vnf mapped on VIM 1234
+        INFO:vCDN-ssm-placement:Mapping succeeded: {'vtc-vnf': {'vim': '1235'}, 'vtu-vnf': {'vim': '1234'}, 'vcc-vnf': {'vim': '1235'}}
+        INFO:vCDN-ssm-placement:The mapping calculation has succeeded.
          ```
