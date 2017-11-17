@@ -118,13 +118,11 @@ class sonSMbase(object):
 
         if 'sf_uuid' in os.environ:
             self.sfuuid = os.environ['sf_uuid']
-        else:
-            self.sfuuid = ''
+
 
         if 'PRIVATE_KEY' in os.environ:
             self.private_key = os.environ['PRIVATE_KEY']
-        else:
-            self.private_key = None
+
 
         message = {'specific_manager_type': self.specific_manager_type,
                    'service_name': self.service_name,
