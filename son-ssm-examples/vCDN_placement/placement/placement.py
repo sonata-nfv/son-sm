@@ -71,8 +71,8 @@ class PlacementSSM(sonSMbase):
 
         # For testing, here we set the service uuid.
         # In the actual scenario this should be set by SLM and SMR during the SSM instantiation.
-        #if self.sfuuid == None:
-        self.sfuuid = '1234'
+        # if self.sfuuid == None:
+        #self.sfuuid = '1234'
 
         # Register to placement topic.
         topic = 'placement.ssm.' + self.sfuuid
@@ -134,7 +134,7 @@ class PlacementSSM(sonSMbase):
         vtc_vcc_total_core = 0
         vtc_vcc_total_memory = 0
         for vnfd in functions:
-            if vnfd['name'] == 'vtc-vnf' or vnfd['name'] == 'vcc-vnf':
+            if vnfd['intance_uuid'] == 'vtc-vnf' or vnfd['intance_uuid'] == 'vcc-vnf':
                 vtc_vcc_total_core += vnfd['virtual_deployment_units'][0]['resource_requirements']['cpu']['vcpus']
                 vtc_vcc_total_memory += vnfd['virtual_deployment_units'][0]['resource_requirements']['memory']['size']
 
@@ -143,47 +143,85 @@ class PlacementSSM(sonSMbase):
         vtu_total_core = 0
         vtu_total_memory = 0
         for vnfd in functions:
-            if vnfd['name'] == 'vtu-vnf':
+            if vnfd['intance_uuid'] == 'vtu-vnf':
                 vtu_total_core = vnfd['virtual_deployment_units'][0]['resource_requirements']['cpu']['vcpus']
                 vtu_total_memory = vnfd['virtual_deployment_units'][0]['resource_requirements']['memory']['size']
 
-        # Place vTC and vCC on the Egress PoP close to users and
-        # place vTU on Ingress PoP close to the server
-        for vnfd in functions:
-            if vnfd['name'] == 'vtc-vnf' or vnfd['name'] == 'vcc-vnf':
-                for vim in topology:
-                    if vim['vim_city'] == egress:
+        if ingress == "" and egress == "":
+
+            for vnfd in functions:
+                if vnfd['name'] == 'vtc-vnf' or vnfd['name'] == 'vcc-vnf':
+                    for vim in topology:
                         cpu_req = vtc_vcc_total_core <= (vim['core_total'] - vim['core_used'])
                         mem_req = vtc_vcc_total_memory <= (vim['memory_total'] - vim['memory_used'])
                         if cpu_req and mem_req:
-                            LOG.debug('VNF ' + vnfd['name'] + ' mapped on VIM ' + vim['vim_uuid'])
-                            mapping[vnfd['name']] = {}
-                            mapping[vnfd['name']]['vim'] = vim['vim_uuid']
+                            LOG.debug('VNF ' + vnfd['intance_uuid'] + ' mapped on VIM ' + vim['vim_uuid'])
+                            mapping[vnfd['intance_uuid']] = {}
+                            mapping[vnfd['intance_uuid']]['vim'] = vim['vim_uuid']
                             vim['core_used'] = vim['core_used'] + \
                                                vnfd['virtual_deployment_units'][0]['resource_requirements']['cpu'][
                                                    'vcpus']
                             vim['memory_used'] = vim['memory_used'] + \
-                                                 vnfd['virtual_deployment_units'][0]['resource_requirements']['memory'][
+                                                 vnfd['virtual_deployment_units'][0]['resource_requirements'][
+                                                     'memory'][
                                                      'size']
                             break
 
-            if vnfd['name'] == 'vtu-vnf':
-                for vim in topology:
-                    if vim['vim_city'] == ingress:
+                if vnfd['name'] == 'vtu-vnf':
+                    for vim in topology:
                         cpu_req = vtu_total_core <= (vim['core_total'] - vim['core_used'])
                         mem_req = vtu_total_memory <= (vim['memory_total'] - vim['memory_used'])
 
                         if cpu_req and mem_req:
-                            LOG.debug('VNF ' + vnfd['name'] + ' mapped on VIM ' + vim['vim_uuid'])
-                            mapping[vnfd['name']] = {}
-                            mapping[vnfd['name']]['vim'] = vim['vim_uuid']
+                            LOG.debug('VNF ' + vnfd['intance_uuid'] + ' mapped on VIM ' + vim['vim_uuid'])
+                            mapping[vnfd['intance_uuid']] = {}
+                            mapping[vnfd['intance_uuid']]['vim'] = vim['vim_uuid']
                             vim['core_used'] = vim['core_used'] + \
                                                vnfd['virtual_deployment_units'][0]['resource_requirements']['cpu'][
                                                    'vcpus']
                             vim['memory_used'] = vim['memory_used'] + \
-                                                 vnfd['virtual_deployment_units'][0]['resource_requirements']['memory'][
+                                                 vnfd['virtual_deployment_units'][0]['resource_requirements'][
+                                                     'memory'][
                                                      'size']
                             break
+        else:
+            # Place vTC and vCC on the Egress PoP close to users and
+            # place vTU on Ingress PoP close to the server
+            for vnfd in functions:
+                if vnfd['name'] == 'vtc-vnf' or vnfd['name'] == 'vcc-vnf':
+                    for vim in topology:
+                        if vim['vim_city'] == egress:
+                            cpu_req = vtc_vcc_total_core <= (vim['core_total'] - vim['core_used'])
+                            mem_req = vtc_vcc_total_memory <= (vim['memory_total'] - vim['memory_used'])
+                            if cpu_req and mem_req:
+                                LOG.debug('VNF ' + vnfd['intance_uuid'] + ' mapped on VIM ' + vim['vim_uuid'])
+                                mapping[vnfd['intance_uuid']] = {}
+                                mapping[vnfd['intance_uuid']]['vim'] = vim['vim_uuid']
+                                vim['core_used'] = vim['core_used'] + \
+                                                   vnfd['virtual_deployment_units'][0]['resource_requirements']['cpu'][
+                                                       'vcpus']
+                                vim['memory_used'] = vim['memory_used'] + \
+                                                     vnfd['virtual_deployment_units'][0]['resource_requirements']['memory'][
+                                                         'size']
+                                break
+
+                if vnfd['name'] == 'vtu-vnf':
+                    for vim in topology:
+                        if vim['vim_city'] == ingress:
+                            cpu_req = vtu_total_core <= (vim['core_total'] - vim['core_used'])
+                            mem_req = vtu_total_memory <= (vim['memory_total'] - vim['memory_used'])
+
+                            if cpu_req and mem_req:
+                                LOG.debug('VNF ' + vnfd['intance_uuid'] + ' mapped on VIM ' + vim['vim_uuid'])
+                                mapping[vnfd['intance_uuid']] = {}
+                                mapping[vnfd['intance_uuid']]['vim'] = vim['vim_uuid']
+                                vim['core_used'] = vim['core_used'] + \
+                                                   vnfd['virtual_deployment_units'][0]['resource_requirements']['cpu'][
+                                                       'vcpus']
+                                vim['memory_used'] = vim['memory_used'] + \
+                                                     vnfd['virtual_deployment_units'][0]['resource_requirements']['memory'][
+                                                         'size']
+                                break
 
         # Check if all VNFs have been mapped
         if len(mapping.keys()) == len(functions):

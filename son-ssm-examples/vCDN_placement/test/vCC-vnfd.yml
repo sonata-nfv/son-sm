@@ -7,6 +7,7 @@ name: "vcc-vnf"
 version: "0.1"
 author: "Stavros Kolometsos @ Demokritos"
 description: "VNF implementing a vCacheContent"
+intance_uuid: "937213ae-890b-413c-a11e-45c62c4eee3h"
 ##
 ## The virtual deployment unit.
 ##

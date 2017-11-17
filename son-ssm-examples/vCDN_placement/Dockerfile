@@ -28,7 +28,7 @@ ENV mongo_port 27017
 ENV broker_host amqp://guest:guest@broker:5672/%2F
 ENV broker_exchange son-kernel
 
-ADD son-ssm-examples/PSA_placement /placement
+ADD son-ssm-examples/vCDN_placement /placement
 ADD son-mano-framework/son-mano-base /son-mano-base
 ADD son-sm-template /son-sm-template
 ADD utils/delayedstart.sh /delayedstart.sh

@@ -8,6 +8,7 @@ name: "vtu-vnf"
 version: "0.1"
 author: "Javier Fernandez Hidalgo, Einar Meyerson :@ i2CAT"
 description: "VNF implementing a vTU (virtual Transcoding Unit)"
+intance_uuid: "937213ae-890b-413c-a11e-45c62c4eee3g"
 ##
 ## The virtual deployment unit.
 ##

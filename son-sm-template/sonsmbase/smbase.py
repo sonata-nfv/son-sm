@@ -77,6 +77,7 @@ class sonSMbase(object):
         self.update_version = update_version
         self.uuid = None
         self.sfuuid = None
+        self.private_key = None
 
         LOG.info("Starting {0} ...".format(self.specific_manager_id))
 
@@ -119,6 +120,11 @@ class sonSMbase(object):
             self.sfuuid = os.environ['sf_uuid']
         else:
             self.sfuuid = ''
+
+        if 'PRIVATE_KEY' in os.environ:
+            self.private_key = os.environ['PRIVATE_KEY']
+        else:
+            self.private_key = None
 
         message = {'specific_manager_type': self.specific_manager_type,
                    'service_name': self.service_name,
