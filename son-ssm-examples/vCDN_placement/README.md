@@ -1,5 +1,5 @@
-# PSA Pilot Placement SSM
-Placement SSM to be used for PSA pilot.
+# vCDN Pilot Placement SSM
+Placement SSM to be used for vCDN pilot.
 
 ## Requires
 * Docker
