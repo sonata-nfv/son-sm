@@ -25,6 +25,7 @@ import yaml
 import threading
 import os
 import re
+import time
 from sonmanobase import messaging
 
 
@@ -88,6 +89,8 @@ class sonSMbase(object):
         self.wait_for_event.clear()
 
         self.registration()
+
+        self.infinity_loop()
 
 
     def name_validation(self, smtype, sname, fname, name, id):
@@ -165,3 +168,11 @@ class sonSMbase(object):
         To be overwritten by subclasses
         """
         LOG.info("Received registration ok event.")
+
+    def infinity_loop(self):
+
+        # go into infinity loop (we could do anything here)
+
+        while True:
+            time.sleep(1)
+
